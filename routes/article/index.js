@@ -26,9 +26,8 @@ router.post("/", (req, res) => {
         //有对应的文章 ,更新点击率
         article.updateOne({_id}, {$inc: {pv: 1}}).then(() =>{})
         //获取延伸阅读
-        let tag = result.tag._id
+        let tag = result.tag._id || ''
         let extendList =await  article.find({tag}, {_id: 1, title: 1}, {skip: 0, limit: 2, sort: {pv: -1}})
-        result.extendList = extendList
         res.send({
           code: 0,
           msg: "查询成功",
@@ -46,7 +45,7 @@ router.post("/", (req, res) => {
       }
     })
     .catch((err) => {
-      console.log(22222, err)
+      console.log( 334454444, err)
       res.send({
         code: 4,
         msg: "服务器错误"

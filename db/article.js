@@ -30,7 +30,7 @@ let article = mongoose.model("article", articleSchema);
 //     type : ["原创","转载"][(Math.random()*2)|0],
 //     title : `第${i+1}篇文章`,
 //     content : (""+i+i+i+i+i+"哈哈哈哈哈我是文章的内容").repeat(10),
-//     tag : "623c2c05368361740c053318"
+//     tag : "623f2fe8d1553356d134159e"
 //   });
 // }
 
