@@ -172,7 +172,7 @@ router.post("/search", (req, res) => {
   /*查找*/
   let reg = new RegExp(keywords,'i');
   article.find(
-    {$or: [{title: reg}, {tag: reg}]},
+    {$or: [{title: reg}]},
     {_id: 1, title: 1},
     {skip:0,limit:5,sort: {date: -1}}
   ).then(data => {
@@ -182,7 +182,8 @@ router.post("/search", (req, res) => {
       msg: "查询成功",
       data
     });
-  }).catch(() => {
+  }).catch((err) => {
+    console.log( err)
     res.send({
       code: 4,
       msg: "服务器异常~",
