@@ -23,6 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //允许跨域
 app.use((req,res,next)=>{
+  console.log( 22222222222222, req.headers)
   res.header({
     'Access-Control-Allow-Credentials': true,
     'Access-Control-Allow-Origin': '*',
@@ -47,6 +48,6 @@ app.use(session({
   ,store : new connectMongo({url : "mongodb://localhost:27017/blog"})//将session存储到数据库
 }));
 //设置路由
-app.use('/api', require('./routes/index'));
+app.use('/', require('./routes/index'));
 
 module.exports = app;
