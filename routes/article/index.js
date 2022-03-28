@@ -66,26 +66,6 @@ router.post("/like", (req, res) =>{
 
 })
 
-// /*延伸阅读*/
-// router.post("/extend", (req, res) => {
-//   let {tag} = req.body;
-
-//   article.find({tag}, {_id: 1, title: 1}, {skip: 0, limit: 2, sort: {pv: -1}})
-//     .then(data => {
-//       res.send({
-//         code: 0,
-//         msg: "查询成功",
-//         data
-//       });
-//     })
-//     .catch(() => {
-//       res.send({
-//         code: 4,
-//         msg: "服务器异常~",
-//         data: []
-//       });
-//     });
-// });
 
 /*获取文章Info*/
 router.post("/getInfo", (req, res) => {
@@ -139,20 +119,6 @@ router.post("/getShow", async (req, res) => {
       total: queryCount
     }
   })
-  // article.find(options, {__v: 0}, {skip, limit: pageSize, sort: {date: -1}})
-  // .populate("articleInfo",{tag: 1, _id: 1})
-  //   .then(data => {
-  //     res.send({
-  //       code: 0,
-  //       data
-  //     });
-  //   })
-  //   .catch(err => {
-  //     res.send({
-  //       code: 4,
-  //       msg: "服务器错误"
-  //     });
-  //   });
 });
 
 /*文章搜索*/
@@ -192,6 +158,72 @@ router.post("/search", (req, res) => {
   })
 });
 
+
+/**文章发表 */
+router.post('/add',async (req, res) => {
+  let {type,title,tag,content,surface} = req.body;
+  //后端数据验证
+  if (!type||!title||!tag||!content){
+    res.send({
+      code : 1,
+      msg : "数据不完整",
+    });
+    return;
+  }
+  /*数据库存储*/
+  article.create(
+    surface?{type,title,tag,content,surface}:{type,title,tag,content}
+  ).then(d=>{
+    res.send({
+      code : 0,
+      msg : "发表成功"
+    })
+  }).catch(()=>{
+    res.send({
+      code : 4,
+      msg : "发表失败，请稍后再试"
+    })
+  })
+})
+
+/*文章删除*/
+router.post("/delete",(req,res)=>{
+  let {_id} = req.body;
+
+  /*删*/
+  article.remove({_id})
+    .then(n=>{
+      res.send({
+        code : 0,
+        msg : "删除成功"
+      });
+    })
+    .catch(e=>{
+      res.send({
+        code : 4,
+        msg : "服务器错误"
+      });
+    })
+});
+
+/*文章更新*/
+router.post("/update",(req,res)=>{
+  let {_id,options} = req.body;
+  /*更新*/
+  article.updateOne({_id},options)
+    .then(()=>{
+      res.send({
+        code : 0,
+        msg : "更新成功"
+      })
+    })
+    .catch(()=>{
+      res.send({
+        code : 4,
+        msg : "更新失败，服务器错误"
+      })
+    })
+});
 
 //导出
 module.exports = router;
