@@ -67,4 +67,86 @@ router.post("/detail", (req, res) => {
     })
 });
 
+//发表
+router.post("/submit", (req, res) => {
+  let {
+    title,
+    img,
+    intro,
+    link,
+    account
+  } = req.body;
+
+
+  let data = {};
+  img && (data.img = img);
+  title && (data.title = title)
+  intro && (data.intro = intro)
+  link && (data.link = link)
+  account && (data.account = account)
+  console.log(data)
+
+  //存数据
+  workDB.create(data)
+    .then(() => {
+      res.send({
+        code: 0,
+        msg: "保存成功"
+      });
+    })
+    .catch(() => {
+      res.send({
+        code: 4,
+        msg: "服务器错误"
+      });
+    })
+});
+
+//删除
+router.post("/delete", (req, res) => {
+  let {
+    _id
+  } = req.body;
+
+  workDB.deleteOne({
+      _id
+    })
+    .then(() => {
+      res.send({
+        code: 0,
+        msg: "删除成功"
+      })
+    })
+    .catch(() => {
+      res.send({
+        code: 4,
+        msg: "服务器错误~"
+      })
+    })
+})
+
+/*更新*/
+router.post("/update", (req, res) => {
+  let {
+    _id,
+    options
+  } = req.body;
+  /*更新*/
+  workDB.updateOne({
+      _id
+    }, options)
+    .then(() => {
+      res.send({
+        code: 0,
+        msg: "更新成功"
+      })
+    })
+    .catch(() => {
+      res.send({
+        code: 4,
+        msg: "更新失败，服务器错误"
+      })
+    })
+});
+
 module.exports = router;

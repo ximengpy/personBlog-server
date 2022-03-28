@@ -11,6 +11,9 @@ router.use("/register", require('./register/index'));
 /*登录接口*/
 router.use("/login", require('./login/index'));
 
+/*用户数据接口*/
+router.use("/user", require('./user/index'));
+
 /*留言接口*/
 router.use("/message", require('./message/index'));
 
