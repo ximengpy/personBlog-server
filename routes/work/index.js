@@ -94,7 +94,8 @@ router.post("/submit", (req, res) => {
         msg: "保存成功"
       });
     })
-    .catch(() => {
+    .catch((err) => {
+      console.log( 33333, err)
       res.send({
         code: 4,
         msg: "服务器错误"

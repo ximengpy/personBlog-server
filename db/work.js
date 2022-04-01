@@ -6,14 +6,10 @@ let work = new Schema({
     type: String,
     required: true
   },
-  img: [{
-    name: {
-      type: String
-    },
-    url: {
-      type: String
-    }
-  }],
+  img: {
+    type: String,
+    defalut: ''
+  },
   intro: {
     type: String,
     required: true
