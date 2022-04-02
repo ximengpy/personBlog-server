@@ -4,18 +4,10 @@ const userDB = require("../../db/user");
 const visitorDB = require("../../db/visitor");
 const crypto = require('crypto')
 let router = express.Router();
-
+const jwt = require('jsonwebtoken')
 //登录接口
 router.post("/",(req,res)=>{
 
-  //已经登录就不需要往下走了
-  if (req.session.login) {
-    res.send({
-      code : 2,
-      msg : "已经登录，请退出之后再登录"
-    });
-    return;
-  }
 
   let {user,pwd} = req.body;
   //验证数据有效性
@@ -32,8 +24,10 @@ router.post("/",(req,res)=>{
       if (data){
         //有这个用户
         if (data.pwd === crypto.createHash('sha256').update(pwd).digest('hex')){
-          //写入session
-          req.session.login = data;
+          const token = 'Bearer ' + jwt.sign({
+            admin: data.admin === true,
+            _id:data.id
+          }, 'py', { expiresIn: '230h' });
 
           //返回前端
           res.send({
@@ -41,7 +35,8 @@ router.post("/",(req,res)=>{
             msg : "登录成功",
             data: {
               user: data.user,
-              photo: data.photo
+              photo: data.photo,
+              token
             }
           });
 
@@ -68,6 +63,7 @@ router.post("/",(req,res)=>{
       }
     })
     .catch(e=>{
+      console.log( 333333, e)
       res.send({
         code : 4,
         msg : "服务器错误~请稍后再试"

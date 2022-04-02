@@ -4,13 +4,12 @@ const svgCaptcha = require("svg-captcha");
 const userDB = require("../../db/user")
 
 let router = express.Router();
-
+let registerCode = {}
 //注册的API
 router.post("/",(req,res)=>{
   let {user,pwd,svgCode} = req.body;
 
-  //干掉req.session.registerVCodeTime
-  req.session.registerVCodeTime = 0;
+
   //验证数据有效性
   if (!user || !pwd || !svgCode){
     res.send({
@@ -21,7 +20,7 @@ router.post("/",(req,res)=>{
   }
 
   //后端再次验证验证码
-  if (svgCode.toLocaleLowerCase() !== req.session.registerVCode.text.toLocaleLowerCase()) {
+  if (svgCode.toLocaleLowerCase() !== registerCode.text.toLocaleLowerCase()) {
     res.send({
       code : 2,
       msg : "验证码错误"
@@ -71,25 +70,12 @@ router.post("/",(req,res)=>{
 //验证码请求接口
 router.post("/vcode",(req,res)=>{
 
-  if (req.session.registerVCodeTime){
-
-    let t_ = new Date - new Date(req.session.registerVCodeTime)
-    if (t_ <= 60000){
-      res.send({
-        code : 2,
-        data : req.session.registerVCode.data,
-        msg : "请求过于频繁",
-        time : 60000-t_
-      });
-      return;
-    }
-  }
-
-  let captcha = svgCaptcha.create();
-
-  //将正确答案存储到session
-  req.session.registerVCode = captcha;
-  req.session.registerVCodeTime = new Date();
+  let captcha = svgCaptcha.create({
+    size: 4, // 验证码长度
+    ignoreChars: '0o1i', // 验证码字符中排除 0o1i
+    noise: 1, // 干扰线条的数量
+  });
+  registerCode = captcha;
 
   //将svg发送到前端
   res.send({
@@ -101,19 +87,19 @@ router.post("/vcode",(req,res)=>{
 
 //验证码失去焦点的请求
 router.post("/checkVcode",(req,res)=>{
-  let {svgCode} = req.body;
+  // let {svgCode} = req.body;
 
-  if (!svgCode || (svgCode.toLocaleLowerCase() !== req.session.registerVCode.text.toLocaleLowerCase())){
-    res.send({
-      code : 1,
-      msg : "验证失败"
-    });
-  }else{
-    res.send({
-      code : 0,
-      msg : "验证成功"
-    });
-  }
+  // if (!svgCode || (svgCode.toLocaleLowerCase() !== req.session.registerVCode.text.toLocaleLowerCase())){
+  //   res.send({
+  //     code : 1,
+  //     msg : "验证失败"
+  //   });
+  // }else{
+  //   res.send({
+  //     code : 0,
+  //     msg : "验证成功"
+  //   });
+  // }
 });
 
 

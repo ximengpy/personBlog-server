@@ -3,9 +3,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require("mongoose");
-var session = require("express-session");
-var connectMongo = require("connect-mongo")(session);
-
+const expressJwt = require('express-jwt')
 
 /*连接数据库*/
 mongoose.connect("mongodb://localhost:27017/blog",{ useNewUrlParser: true, useUnifiedTopology: true })
@@ -21,9 +19,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+//设置session
+app.use(require("./utils/session.js"));
 //允许跨域
 app.use((req,res,next)=>{
-  console.log( 22222222222222, req.headers)
   res.header({
     'Access-Control-Allow-Credentials': true,
     'Access-Control-Allow-Origin': '*',
@@ -37,16 +37,20 @@ app.use((req,res,next)=>{
     next();
   }
 });
+app.use(expressJwt({
+  secret: 'py' , // 签名的密钥 或 PublicKey
+  algorithms:['HS256']
+}).unless({
+  path: ['/login','/upload', '/register/vcode', '/register']  // 指定路径不经过 Token 解析
+}))
+app.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+	  //  这个需要根据自己的业务逻辑来处理（ 具体的err值 请看下面）
+    res.status(411).send('登录过期');
+  }
+});
 
-// 设置Session
-app.use(session({
-  secret : "py" //密钥，一个字符，用于加密，可以随便写个字符串
-  ,cookie : {maxAge:30*60*1000} //给前端设置的cookie有效期时长
-  ,rolling : true //每次用户和后端交互时（访问连接，ajax...），刷新cookie有效期
-  ,resave : false //是否每次重新存储session
-  ,saveUninitialized : false //初始化
-  ,store : new connectMongo({url : "mongodb://localhost:27017/blog"})//将session存储到数据库
-}));
+
 //设置路由
 app.use('/', require('./routes/index'));
 
