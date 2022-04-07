@@ -161,7 +161,7 @@ router.post("/search", (req, res) => {
 
 /**文章发表 */
 router.post('/add',async (req, res) => {
-  let {type,title,tag,content,surface} = req.body;
+  let {type,title,tag,content} = req.body;
   //后端数据验证
   if (!type||!title||!tag||!content){
     res.send({
@@ -172,7 +172,7 @@ router.post('/add',async (req, res) => {
   }
   /*数据库存储*/
   article.create(
-    surface?{type,title,tag,content,surface}:{type,title,tag,content}
+    {type,title,tag,content}
   ).then(d=>{
     res.send({
       code : 0,

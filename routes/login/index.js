@@ -63,7 +63,6 @@ router.post("/",(req,res)=>{
       }
     })
     .catch(e=>{
-      console.log( 333333, e)
       res.send({
         code : 4,
         msg : "服务器错误~请稍后再试"
@@ -71,25 +70,8 @@ router.post("/",(req,res)=>{
     })
 })
 
-//验证是否登录
-router.post("/ifLogin",(req,res)=>{
-  let data = req.session.login;
-  // console.log(req)
-  let resData = false;
-  if (data){
-    delete data.pwd;
-    delete data.__v;
-    resData = data;
-  }
-  res.send({
-    userInfo : resData,
-    code: 0
-  });
-});
-
 //登出
 router.post("/logout",(req,res)=>{
-  req.session.destroy();
   res.send({
     code : 0,
     msg : "退出登陆成功"

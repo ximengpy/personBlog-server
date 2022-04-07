@@ -41,12 +41,15 @@ app.use(expressJwt({
   secret: 'py' , // 签名的密钥 或 PublicKey
   algorithms:['HS256']
 }).unless({
-  path: ['/login','/upload', '/register/vcode', '/register']  // 指定路径不经过 Token 解析
+  path: ['/login','/upload', '/register/vcode', '/register', '/article/getHot']  // 指定路径不经过 Token 解析
 }))
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
 	  //  这个需要根据自己的业务逻辑来处理（ 具体的err值 请看下面）
-    res.status(411).send('登录过期');
+    res.status(200).send({
+      code: 5,
+      msg: '登录过期'
+    });
   }
 });
 

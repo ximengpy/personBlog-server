@@ -3,7 +3,6 @@ var router = express.Router();
 var jwt = require('jsonwebtoken');
 
 router.use(function (req, res, next) {
-  console.log(1111111, req.headers.hasOwnProperty('authorization'))
   if (req.headers.hasOwnProperty('authorization')) {
     jwt.verify(req.headers.authorization.split(' ')[1], 'py', function (err, decoded) {
       // console.log('err', err)
