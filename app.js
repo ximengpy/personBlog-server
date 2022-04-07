@@ -17,8 +17,10 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/',express.static(path.join(__dirname, 'web')));//web端
+app.use('/manage',express.static(path.join(__dirname, 'manage')));//后台管理端
 
 //设置session
 app.use(require("./utils/session.js"));
